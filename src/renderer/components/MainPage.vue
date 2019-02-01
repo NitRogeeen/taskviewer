@@ -1,5 +1,11 @@
 <template>
   <el-container>
+    <el-menu default-active="1" style="height: 100vh;" :collapse="true">
+      <el-menu-item index="1">
+        <i class="el-icon-menu"></i>
+        <span slot="title">hoge</span>
+      </el-menu-item>
+    </el-menu>
     <el-main>
       <el-row>
         <el-col :span="24">
