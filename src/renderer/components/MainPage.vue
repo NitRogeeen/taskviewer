@@ -50,35 +50,38 @@
     name: 'main-page',
     data () {
       return {
-        taskList: [
-          {
-            checked: false,
-            task: 'hoge'
-          },
-          {
-            checked: true,
-            task: 'hogehoge'
-          }
-        ],
+        taskList: [],
         form: {
           taskName: ''
         },
         dialogFormVisible: false,
-        formLabelWidth: '120px',
-        multipleSelection: []
+        formLabelWidth: '120px'
       }
+    },
+    mounted: function () {
+      this.reloadTask()
     },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       },
       insertTask () {
-        this.taskList.push({checked: false, task: this.form.taskName})
+        // this.taskList.push({checked: false, task: this.form.taskName})
+        this.$db.insert({checked: false, task: this.form.taskName})
         this.form.taskName = ''
         this.dialogFormVisible = false
+        this.reloadTask()
       },
       deleteTask (index) {
         this.taskList.splice(index, 1)
+      },
+      reloadTask () {
+        let self = this
+        this.$db.find({}, function (err, docs) {
+          self.taskList = docs
+          console.log(docs)
+          console.log(err)
+        })
       }
     }
   }

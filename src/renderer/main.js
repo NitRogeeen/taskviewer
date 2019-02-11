@@ -3,12 +3,14 @@ import axios from 'axios'
 import ElementUI from 'element-ui'
 import locale from 'element-ui/lib/locale/lang/ja'
 import 'element-ui/lib/theme-chalk/index.css'
+import db from './datastore'
 
 import App from './App'
 import router from './router'
 import store from './store'
 
 Vue.use(ElementUI, {locale})
+Vue.prototype.$db = db
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
