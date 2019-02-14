@@ -20,30 +20,42 @@
             <el-button type="primary" style="width: 100%;" @click="insertTask" round>add</el-button>
           </el-col>
         </el-row>
-        <el-table :data="taskList" :show-header="false" style="width: 100%;" stripe>
+        <el-table :data="taskList" :show-header="false" style="width: 100%;" :row-class-name="tableRowClassName">
           <el-table-column align="center" width="50px">
             <template slot-scope="record">
               <!-- <el-switch v-model="record.row.checked" active-color="#13ce66" inactive-color="#ff4949"></el-switch> -->
-              <el-checkbox v-model="record.row.checked"></el-checkbox>
+              <el-checkbox v-model="record.row.checked" v-on:change="updateChecked(record.row._id, record.row.checked)"></el-checkbox>
             </template>
           </el-table-column>
           <el-table-column prop="task" width="auto"></el-table-column>
+          <el-table-column align="center" width="100px">
+            <template slot-scope="record">
+              <el-button type="default" icon="el-icon-edit" @click="edit(record.row._id)" size="mini" circle></el-button>
+            </template>
+          </el-table-column>
         </el-table>
       </el-card>
     </el-main>
-    <el-dialog title="Add your task" :visible.sync="dialogFormVisible">
+    <el-dialog title="Edit your task" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="Task name" :label-width="formLabelWidth">
-          <el-input v-model="form.taskName" autocomplete="off"></el-input>
+          <el-input v-model="form.task" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="insertTask">Add</el-button>
+        <el-button type="primary" @click="insertTask">Submit</el-button>
       </span>
     </el-dialog>
   </el-container>
 </template>
+
+<style>
+  .el-table .disable-row {
+    background: lightgray;
+    text-decoration: line-through;
+  }
+</style>
 
 <script>
   export default {
@@ -52,7 +64,7 @@
       return {
         taskList: [],
         form: {
-          taskName: ''
+          task: 'gray'
         },
         dialogFormVisible: false,
         formLabelWidth: '120px'
@@ -64,6 +76,12 @@
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      },
+      tableRowClassName ({row, rowIndex}) {
+        if (row.checked) {
+          return 'disable-row'
+        }
+        return ''
       },
       insertTask () {
         // this.taskList.push({checked: false, task: this.form.taskName})
@@ -82,6 +100,22 @@
           console.log(docs)
           console.log(err)
         })
+      },
+      updateChecked (id, checked) {
+        this.$db.update({_id: id}, {$set: {checked: checked}}, {}, function (err, num) {
+          console.log(err)
+          console.log(num)
+        })
+        this.reloadTask()
+      },
+      edit (id) {
+        let self = this
+        this.$db.find({_id: id}, function (err, docs) {
+          console.log(err)
+          self.form.task = docs[0].task
+        })
+        this.dialogFormVisible = true
+        console.log(id)
       }
     }
   }
