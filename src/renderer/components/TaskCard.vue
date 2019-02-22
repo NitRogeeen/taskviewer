@@ -1,5 +1,6 @@
 <template>
   <el-card>
+    <el-row>{{ date }}</el-row>
     <el-row>
       <el-col :span="24">
         <el-input placeholder="Please enter your task" v-model="form.taskName"></el-input>
@@ -24,21 +25,32 @@
         </template>
       </el-table-column>
     </el-table>
+    <el-dialog title="Edit your task" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="Task name" :label-width="formLabelWidth">
+          <el-input v-model="form.task" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="insertTask">Submit</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
 <script>
   export default {
     name: 'task-card',
-    props: ['taskDate'],
+    props: ['date'],
     data () {
       return {
         taskList: [],
         form: {
           task: 'gray'
         },
-        dialogFormVisible: false,
-        formLabelWidth: '120px'
+        formLabelWidth: '120px',
+        dialogFormVisible: false
       }
     },
     mounted: function () {
@@ -91,3 +103,10 @@
     }
   }
 </script>
+
+<style>
+  .el-table .disable-row {
+    background: lightgray;
+    text-decoration: line-through;
+  }
+</style>
