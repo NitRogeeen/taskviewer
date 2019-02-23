@@ -114,7 +114,7 @@
       },
       reloadTask () {
         let self = this
-        this.$db.find({}, function (err, docs) {
+        this.$db.find({date: moment(self.mDate).toDate()}, function (err, docs) {
           self.taskList = docs
           console.log(err)
         })
