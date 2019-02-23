@@ -2,9 +2,9 @@
   <el-container>
     <el-aside width="70px">
       <el-menu default-active="1" style="height: 100vh;" :collapse="true">
-        <el-menu-item index="1" @click="">
-          <i class="el-icon-date"></i>
-          <span slot="title">Calendar</span>
+        <el-menu-item index="1">
+          <i class="el-icon-menu"></i>
+          <span slot="title">menu</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -12,11 +12,10 @@
       <el-header>
         <div class="daterange-picker">
           <el-date-picker
-            v-model="value7"
-            type="daterange"
-            range-separator="To"
-            start-placeholder="Start date"
-            end-placeholder="End date">
+            v-model="date"
+            type="date"
+            placeholder="Pick a date"
+            v-on:change="setDate(date)">
           </el-date-picker>
         </div>
       </el-header>
@@ -37,19 +36,25 @@
       return {
         taskList: [],
         mDate: {},
-        value7: ''
+        pickerOptions: {
+          onPick (maxDate, minDate) {
+            console.log(maxDate)
+            console.log(minDate)
+          }
+        },
+        date: ''
       }
     },
     mounted () {
-      this.setDate(moment())
+      this.setDate(new Date())
     },
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
       },
-      setDate (mDate) {
-        console.log(mDate.format('YYYYMMDD'))
-        this.mDate = mDate
+      setDate (date) {
+        this.mDate = moment(date)
+        this.date = date
       }
     }
   }

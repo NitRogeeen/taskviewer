@@ -66,7 +66,7 @@
       }
     },
     mounted () {
-      this.taskDate = moment(this.mTaskDate).format('YYYY/MM/DD')
+      this.taskDate = moment(this.mTaskDate).format('YYYY-MM-DD')
       this.reloadTask()
     },
     methods: {
@@ -81,7 +81,7 @@
       },
       insertTask () {
         // this.taskList.push({checked: false, task: this.form.taskName})
-        this.$db.insert({date: this.mTaskDate, checked: false, task: this.form.taskName})
+        this.$db.insert({date: moment(this.mTaskDate).toDate(), checked: false, task: this.form.taskName})
         this.form.taskName = ''
         this.dialogEditFormVisible = false
         this.reloadTask()
@@ -130,7 +130,7 @@
         let self = this
         this.$db.find({_id: id}, function (err, docs) {
           console.log(err)
-          self.form.date = docs[0].date
+          self.form.date = moment(docs[0].date).format('YYYY-MM-DD')
           self.form.task = docs[0].task
         })
         this.dialogEditFormVisible = true
