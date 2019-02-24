@@ -20,7 +20,7 @@
         </div>
       </el-header>
       <el-main>
-        <task-card v-bind="mDate"></task-card>
+        <task-card v-bind:mDate="mDate"></task-card>
       </el-main>
     </el-container>
   </el-container>
@@ -36,17 +36,12 @@
       return {
         taskList: [],
         mDate: {},
-        pickerOptions: {
-          onPick (maxDate, minDate) {
-            console.log(maxDate)
-            console.log(minDate)
-          }
-        },
         date: ''
       }
     },
     mounted () {
-      this.setDate(new Date())
+      let self = this
+      this.setDate(self.$cutTime(new Date()))
     },
     methods: {
       open (link) {
@@ -55,7 +50,7 @@
       setDate (date) {
         this.mDate = moment(date)
         this.date = date
-        console.log(this.mDate.format('YYYYMMDD'))
+        console.log(this.mDate.toDate())
       }
     }
   }
