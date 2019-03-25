@@ -3,7 +3,7 @@
     <el-row>{{ setTaskDate }}</el-row>
     <el-row>
       <el-col :span="24">
-        <el-input placeholder="Please enter your task" v-model="form.taskName"></el-input>
+        <el-input placeholder="Please enter your task" v-model="taskName"></el-input>
       </el-col>
     </el-row>
     <el-row type="flex" justify="end">
@@ -36,12 +36,12 @@
           <el-input v-model="form.date" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="Task name" :label-width="formLabelWidth">
-          <el-input v-model="form.task" autocomplete="off"></el-input>
+          <el-input v-model="form.taskName" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogEditFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="insertTask">Submit</el-button>
+        <el-button type="primary" @click="editDialogSubmit">Submit</el-button>
       </span>
     </el-dialog>
   </el-card>
@@ -55,8 +55,10 @@
     data () {
       return {
         taskDate: '',
+        taskName: '',
         taskList: [],
         form: {
+          id: '',
           date: '',
           taskName: ''
         },
@@ -64,16 +66,9 @@
         dialogEditFormVisible: false
       }
     },
-    mounted () {
-      console.log('mounted: ' + this.mDate.format('YYYY-MM-DD'))
-      // this.reloadTask()
-    },
-    beforeUpdate () {
-      console.log('beforeUpdate: ' + this.mDate.format('YYYY-MM-DD'))
-      this.reloadTask()
-    },
     computed: {
       setTaskDate () {
+        this.reloadTask()
         return moment(this.mDate).format('YYYY-MM-DD')
       }
     },
@@ -88,10 +83,9 @@
         return ''
       },
       insertTask () {
-        // this.taskList.push({checked: false, task: this.form.taskName})
         console.log('insertTask: ' + this.mDate)
-        this.$db.insert({date: moment(this.mDate).toDate(), checked: false, task: this.form.taskName})
-        this.form.taskName = ''
+        this.$db.insert({date: moment(this.mDate).toDate(), checked: false, task: this.taskName})
+        this.taskName = ''
         this.dialogEditFormVisible = false
         this.reloadTask()
       },
@@ -129,6 +123,15 @@
           console.log(err)
         })
       },
+      updateTask () {
+        let self = this
+        this.$db.update({_id: self.form.id}, {$set: {date: moment(self.form.date).toDate(), task: self.form.taskName}}, {}, function (err, num) {
+          console.log(err)
+          console.log(num)
+        })
+        console.log('updateTask')
+        this.reloadTask()
+      },
       updateChecked (id, checked) {
         this.$db.update({_id: id}, {$set: {checked: checked}}, {}, function (err, num) {
           console.log(err)
@@ -140,12 +143,15 @@
         let self = this
         this.$db.find({_id: id}, function (err, docs) {
           console.log(err)
-          console.log(docs[0].date)
+          self.form.id = docs[0]._id
           self.form.date = moment(docs[0].date).format('YYYY-MM-DD')
-          self.form.task = docs[0].task
+          self.form.taskName = docs[0].task
         })
         this.dialogEditFormVisible = true
-        console.log(id)
+      },
+      editDialogSubmit () {
+        this.updateTask()
+        this.dialogEditFormVisible = false
       }
     }
   }
