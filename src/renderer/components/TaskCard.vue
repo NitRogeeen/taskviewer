@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <el-row>{{ taskDate }}</el-row>
+    <el-row>{{ setTaskDate }}</el-row>
     <el-row>
       <el-col :span="24">
         <el-input placeholder="Please enter your task" v-model="form.taskName"></el-input>
@@ -55,7 +55,6 @@
     data () {
       return {
         taskDate: '',
-        mTaskDate: this.mDate,
         taskList: [],
         form: {
           date: '',
@@ -66,7 +65,17 @@
       }
     },
     mounted () {
+      console.log('mounted: ' + this.mDate.format('YYYY-MM-DD'))
+      // this.reloadTask()
+    },
+    beforeUpdate () {
+      console.log('beforeUpdate: ' + this.mDate.format('YYYY-MM-DD'))
       this.reloadTask()
+    },
+    computed: {
+      setTaskDate () {
+        return moment(this.mDate).format('YYYY-MM-DD')
+      }
     },
     methods: {
       open (link) {
@@ -80,8 +89,8 @@
       },
       insertTask () {
         // this.taskList.push({checked: false, task: this.form.taskName})
-        console.log(this.mTaskDate)
-        this.$db.insert({date: moment(this.mTaskDate).toDate(), checked: false, task: this.form.taskName})
+        console.log('insertTask: ' + this.mDate)
+        this.$db.insert({date: moment(this.mDate).toDate(), checked: false, task: this.form.taskName})
         this.form.taskName = ''
         this.dialogEditFormVisible = false
         this.reloadTask()
@@ -114,7 +123,6 @@
       },
       reloadTask () {
         console.log('reload')
-        this.taskDate = moment(this.mTaskDate).format('YYYY-MM-DD')
         let self = this
         this.$db.find({date: moment(self.mDate).toDate()}, function (err, docs) {
           self.taskList = docs

@@ -50,7 +50,6 @@
       setDate (date) {
         this.mDate = moment(date)
         this.date = date
-        console.log(this.mDate.toDate())
       }
     }
   }
