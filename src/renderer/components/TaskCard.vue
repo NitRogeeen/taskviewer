@@ -33,7 +33,13 @@
     <el-dialog title="Edit your task" :visible.sync="dialogEditFormVisible">
       <el-form :model="form">
         <el-form-item label="Date" :label-width="formLabelWidth">
-          <el-input v-model="form.date" autocomplete="off"></el-input>
+          <!-- <el-input v-model="form.date" autocomplete="off"></el-input> -->
+          <el-date-picker
+            v-model="form.date"
+            type="date"
+            placeholder="Pick a date"
+            style="width:100%">
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="Task name" :label-width="formLabelWidth">
           <el-input v-model="form.taskName" autocomplete="off"></el-input>
@@ -161,5 +167,13 @@
   .el-table .disable-row {
     background: lightgray;
     text-decoration: line-through;
+  }
+  .el-dialog {
+    margin-left: 15vw;
+    width: 70vw;
+    min-width: 350px;
+  }
+  .el-card {
+    min-width:350px;
   }
 </style>
